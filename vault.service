@@ -16,6 +16,7 @@ StandardError=/var/log/vault/error.log
 SecureBits=keep-caps
 NoNewPrivileges=yes
 KillSignal=SIGINT
+LimitMEMLOCK=infinity
 
 [Install]
 WantedBy=multi-user.target
