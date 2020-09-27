@@ -19,9 +19,23 @@ sudo mkdir -p /etc/vault
 sudo mkdir -p /var/log/vault
 sudo install -o vault -g vault -m 750 -d /var/log/vault
 
+
+# generate certs for tls
+cert=/etc/vault/certs
+sudo openssl genrsa -out ${cert}.key 2048
+sudo openssl req -new -key ${cert}.key -out ${cert}.csr \
+  -extensions v3_ca \
+  -subj "/C=US/ST=CA/O=Iono/L=San Jose/OU=Iono/CN=Universal CA root"
+sudo openssl x509 -req -days 3650 -in ${cert}.csr -signkey ${cert}.key \
+  -out ${cert}.crt
+sudo chown -R vault:vault ${cert}.*
+
 # copy vault.service to systemd
 sudo cp config.hcl /etc/vault/
 sudo cp vault.service /etc/systemd/system/vault.service
+
+# start vault deamon
 sudo systemctl deamon-reload
+sudo systemctl enable vault.service
 sudo systemctl start vault.service
 
