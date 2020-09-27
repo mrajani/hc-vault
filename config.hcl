@@ -6,6 +6,6 @@ listener "tcp" {
  address     = "0.0.0.0:8200"
  tls_disable = 1
 }
-disable_mlock = true
+disable_mlock = false
 api_addr = "http://localhost:8200"
 
