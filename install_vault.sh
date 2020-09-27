@@ -7,6 +7,7 @@ vault=vault_${tag}_linux_amd64.zip
 url=https://releases.hashicorp.com/vault/${tag}/${vault}
 echo "Downloading ${tag} version of Vault"
 wget -c -q ${url} && sudo unzip -d /usr/bin ${vault} && rm ${vault} 
+sudo setcap cap_ipc_lock=+ep $(readlink -f $(which vault))
 
 # Add vault user and group
 sudo useradd -r -d /opt/vault/vault-data -s /bin/nologin vault
