@@ -1,0 +1,81 @@
+---
+  - name: Create KMS
+    hosts: localhost
+    gather_facts: yes
+    connection: local
+    vars:
+    - certs_folder: ./playbooks/roles/vault/files
+    - server_hostname: "{{ ansible_host }}"
+    - key_size: 4096
+    - passphrase: # Set if you want passphrase
+    - key_type: RSA # Others include DSA, ECC, Ed25519, Ed448, X25519, X448
+    - country_name: US
+    - email_address: admin@localhost
+    - organization_name: localhost
+    - key_alias: "vault-auto-unseal-88ba60e6"
+
+    tasks:
+      - name: Create new KMS Key for Vault Unseal
+        aws_kms:
+        args:
+          alias: "alias/{{ key_alias }}"
+          tags:
+            Name: Vault-Auto-Unseal
+            Purpose: Key to auto unseal Vault managed in ASG
+          state: present
+        register: output
+
+      - name: Print Key ARN ID
+        debug:
+          var: output.key_arn, output.key_id
+
+      - name: Add kms key to vars file Packer to build
+        lineinfile:
+          create: yes
+          path: ./playbooks/roles/vault/vars/main.yml
+          mode: '0644'
+          regexp: '^aws_kms_key'
+          line: "aws_kms_key: {{ output.key_id }}"
+
+      - name: Get AWS Key Info
+        aws_kms_info:
+          pending_deletion: no
+          filters:
+            alias: "{{ key_alias }}"
+            #tag-key: Name
+            #tag-value: Vault-Auto-Unseal
+        register: kms_info
+
+      - name: Create certificates folder
+        file:
+          path: "{{certs_folder}}"
+          state: directory
+          group: "{{ ansible_user }}"
+          owner: "{{ ansible_user }}"
+
+      - name: Generate an OpenSSL private key
+        openssl_privatekey:
+          path: "{{certs_folder}}/certs.key.pem"
+          size: "{{ key_size }}"
+          type: "{{ key_type }}"
+          backup: yes
+
+      - name: Generate an OpenSSL Certificate Signing Request with Subject information
+        openssl_csr:
+          path: "{{certs_folder}}/certs.csr.pem"
+          privatekey_path: "{{certs_folder}}/certs.key.pem"
+
+          common_name: "{{ server_hostname }}"
+          subject_alt_name: "DNS:*,DNS:*.*,DNS:*.*.*,IP:{{ansible_default_ipv4.address}}"
+
+      - name: Generate a Self Signed OpenSSL certificate
+        openssl_certificate:
+          path: "{{certs_folder}}/certs.crt.pem"
+          privatekey_path: "{{certs_folder}}/certs.key.pem"
+          csr_path: "{{certs_folder}}/certs.csr.pem"
+          provider: selfsigned
+
+      - name: Run Packer Build
+        shell: echo packer build packer.default.json
+
+

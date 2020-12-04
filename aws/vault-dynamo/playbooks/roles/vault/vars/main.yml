@@ -1,0 +1,5 @@
+vault_version: 1.6.0
+aws_kms_key: fad73ebf-d947-48e6-9ce4-843aefa8f72a
+aws_region: us-east-1
+tag_key: vault_raft_member
+tag_value: join 

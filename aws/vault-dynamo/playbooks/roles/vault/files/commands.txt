@@ -1,0 +1,6 @@
+export VAULT_ADDR=https://127.0.0.1:8200
+export VAULT_SKIP_VERIFY=true
+vault operator init -recovery-shares=1 -recovery-threshold=1 | tee keys.txt
+vault operator raft join https://10.XX.XX.XX:8200
+vault operator raft join http://10.XX.XX.XX:8200
+vault status -tls-skip-verify

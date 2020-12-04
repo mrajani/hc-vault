@@ -1,0 +1,8 @@
+---
+- hosts: localhost
+  connection: local
+  roles:
+    - vault
+  become: yes
+  any_errors_fatal: true
+  
