@@ -1,5 +1,5 @@
 vault_version: 1.6.0
-aws_kms_key: fad73ebf-d947-48e6-9ce4-843aefa8f72a
-aws_region: us-east-1
-tag_key: vault_raft_member
-tag_value: join 
+certs_folder: "./roles/vault/files/"
+days_valid: "+365d"
+key_size: 2048
+key_type: RSA # Others include DSA, ECC, Ed25519, Ed448, X25519, X448

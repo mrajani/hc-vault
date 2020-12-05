@@ -1,7 +1,48 @@
 ---
 
+- amazon.aws.ec2_metadata_facts:
+
+- name: Multiple environment variables in a single line ansible task
+  debug:
+    msg: "{{ lookup('env','AWS_KMS_KEY') }}"
+
+- name: Create certificates folder
+  file:
+    path: "{{certs_folder}}"
+    state: directory
+    group: "{{ ansible_user }}"
+    owner: "{{ ansible_user }}"
+
+- name: Generate an OpenSSL private key
+  openssl_privatekey:
+    path: "{{certs_folder}}/vault.key.pem"
+    size: "{{ key_size }}"
+    type: "{{ key_type }}"
+    backup: yes
+    group: "{{ ansible_user }}"
+    owner: "{{ ansible_user }}"
+
+- name: Generate an OpenSSL Certificate Signing Request with Subject information
+  openssl_csr:
+    path: "{{certs_folder}}/vault.csr.pem"
+    privatekey_path: "{{certs_folder}}/vault.key.pem"
+    common_name: "{{ansible_ec2_local_hostname}}"
+    subject_alt_name: "DNS:*,DNS:*.*,DNS:*.*.*,DNS:{{ansible_ec2_local_hostname}},IP:{{ansible_ec2_local_ipv4}}"
+
+- name: Generate a Self Signed OpenSSL certificate
+  openssl_certificate:
+    path: "{{certs_folder}}/vault.crt.pem"
+    privatekey_path: "{{certs_folder}}/vault.key.pem"
+    csr_path: "{{certs_folder}}/vault.csr.pem"
+    selfsigned_not_after: "{{days_valid}}"
+    provider: selfsigned
+
+- name: Delete the CSR file
+  file: 
+    path: "{{certs_folder}}/vault.csr.pem"
+    state: absent
+
 - name: Install Unzip
-  become: yes
   apt:
     pkg:
       - unzip
@@ -61,14 +102,16 @@
     owner: vault
     mode: '0600'
   with_items:
-    - certs.crt.pem
-    - certs.key.pem
+    - vault.crt.pem
+    - vault.key.pem
 
 - name: Restart systemctl daemon
   shell: systemctl daemon-reload
 
 - name: Enable vault server
-  shell: systemctl enable vault
+  shell: echo systemctl enable vault
 
 - name: Start vault server
-  shell: systemctl start vault
+  shell: echo systemctl start vault
+
+
