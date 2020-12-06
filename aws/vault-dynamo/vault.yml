@@ -4,7 +4,7 @@
   roles:
     - vault
   vars_files:
-    - vault.vars.yml
+    - ~/vault.vars.yml
   become: yes
   any_errors_fatal: true
   

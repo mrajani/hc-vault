@@ -4,7 +4,7 @@ storage "dynamodb" {
   table = "{{vault_dynamodb_table}}"
 }
 
-api_addr          = "https://{{ ansible_default_ipv4.address }}:8200"
+api_addr          = "https://{{ vault_dns }}:8200"
 cluster_addr      = "https://{{ ansible_default_ipv4.address }}:8201"
 
 listener "tcp" {
@@ -18,8 +18,8 @@ listener "tcp" {
 
 seal "awskms" {
   region     = "{{ aws_region }}"
-  # kms_key_id = "{{ aws_kms_key }}"
-  kms_key_id = "{{ lookup('env','AWS_KMS_KEY') }}"
+  kms_key_id = "{{ aws_kms_key }}"
+  # kms_key_id = "{{ lookup('env','AWS_KMS_KEY') }}"
 }
 
 ui                = true
