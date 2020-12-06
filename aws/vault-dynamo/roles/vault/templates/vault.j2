@@ -1,0 +1,27 @@
+storage "dynamodb" {
+  ha_enabled = "true"
+  region = "{{vault_cluster_region}}"
+  table = "{{vault_dynamodb_table}}"
+}
+
+api_addr          = "https://{{ ansible_default_ipv4.address }}:8200"
+cluster_addr      = "https://{{ ansible_default_ipv4.address }}:8201"
+
+listener "tcp" {
+  address         = "{{ ansible_default_ipv4.address }}:8200"
+  cluster_address = "{{ ansible_default_ipv4.address }}:8201"
+  tls_cert_file   = "/etc/vault.d/vault.crt.pem"
+  tls_key_file    = "/etc/vault.d/vault.key.pem"
+  tls_min_version = "tls12"
+  tls_disable     = false
+}
+
+seal "awskms" {
+  region     = "{{ aws_region }}"
+  # kms_key_id = "{{ aws_kms_key }}"
+  kms_key_id = "{{ lookup('env','AWS_KMS_KEY') }}"
+}
+
+ui                = true
+default_lease_ttl = "1h"
+cluster_name      = "Vault-DynamoDB"
