@@ -109,9 +109,9 @@
   shell: systemctl daemon-reload
 
 - name: Enable vault server
-  shell: echo systemctl enable vault
+  shell: systemctl enable vault
 
 - name: Start vault server
-  shell: echo systemctl start vault
+  shell: systemctl start vault
 
 
