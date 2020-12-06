@@ -1,4 +1,0 @@
-vault_dynamodb_table: vault-data
-vault_cluster_region: us-east-1
-aws_region: "us-east-1"
-aws_kms_key: "a7cc704d-999d-4f54-bc4c-33c3087bccee"

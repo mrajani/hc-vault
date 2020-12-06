@@ -1,7 +1,0 @@
----
-- hosts: localhost
-  connection: local
-  roles:
-    - certs
-  any_errors_fatal: true
-
