@@ -7,7 +7,7 @@
 
 - name: Get DynamoDB Table from SSM Parameter Store
   set_fact:
-    vault_dynamodb_table: "{{lookup('aws_ssm', 'vault_dynamodb_table'))}}"
+    vault_dynamodb_table: "{{lookup('aws_ssm', 'vault_dynamodb_table')}}"
 
 - name: Get KMS Key from SSM Parameter Store
   set_fact:
