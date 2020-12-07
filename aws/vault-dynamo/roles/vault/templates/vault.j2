@@ -1,10 +1,10 @@
 storage "dynamodb" {
   ha_enabled = "true"
-  region = "{{vault_cluster_region}}"
+  region = "{{aws_region}}"
   table = "{{vault_dynamodb_table}}"
 }
 
-api_addr          = "https://{{ vault_dns }}:8200"
+api_addr          = "https://{{ vault_dns }}"
 cluster_addr      = "https://{{ ansible_default_ipv4.address }}:8201"
 
 listener "tcp" {
@@ -19,9 +19,9 @@ listener "tcp" {
 seal "awskms" {
   region     = "{{ aws_region }}"
   kms_key_id = "{{ aws_kms_key }}"
-  # kms_key_id = "{{ lookup('env','AWS_KMS_KEY') }}"
 }
 
 ui                = true
-default_lease_ttl = "1h"
-cluster_name      = "Vault-DynamoDB"
+default_lease_ttl = "24h"
+max_lease_ttl     = "24h"
+cluster_name      = "Iono-Vault-DynamoDB"

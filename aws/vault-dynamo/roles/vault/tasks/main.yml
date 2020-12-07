@@ -1,6 +1,25 @@
 ---
-
 - amazon.aws.ec2_metadata_facts:
+
+- name: Set AWS Region
+  set_fact:
+    aws_region: "{{ ansible_ec2_placement_region }}"
+
+- name: Get DynamoDB Table from SSM Parameter Store
+  set_fact:
+    vault_dynamodb_table: "{{lookup('aws_ssm', 'vault_dynamodb_table'))}}"
+
+- name: Get KMS Key from SSM Parameter Store
+  set_fact:
+    aws_kms_key: "{{lookup('aws_ssm', 'vault_unseal_key')}}"
+
+- name: Get Vault DNS URL
+  set_fact:
+    vault_dns: "{{lookup('aws_ssm', 'vault_dns_name')}}"
+
+- name: Get S3 bucket store to save encrypted vault tokens
+  set_fact:
+    vault_s3: "{{lookup('aws_ssm', 'vault_tokens_encrypted')}}"
 
 - name: Multiple environment variables in a single line ansible task
   debug:
@@ -38,7 +57,7 @@
     provider: selfsigned
 
 - name: Delete the CSR file
-  file: 
+  file:
     path: "{{certs_folder}}/vault.csr.pem"
     state: absent
 
