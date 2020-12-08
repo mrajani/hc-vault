@@ -133,6 +133,11 @@
 - name: Start vault server
   shell: systemctl start vault
 
+- name: Pause till the servers are started
+  wait_for:
+    port: 8200
+    delay: 10
+
 - name: Verify Vault Initialized
   command: /usr/local/bin/vault operator init -status -tls-skip-verify
   ignore_errors: true
