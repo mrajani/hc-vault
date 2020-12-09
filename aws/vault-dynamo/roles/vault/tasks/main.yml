@@ -173,9 +173,11 @@
   shell: |
     aws kms encrypt --region "{{ aws_region }}" --key-id "{{ aws_kms_key }}" --plaintext fileb://unseal_keys.txt --output text --query CiphertextBlob | /usr/bin/base64 --decode > /tmp/vault_creds_encrypted
   register: output
+  when: '"Vault is not initialized" in status.stdout'
 
 - name: Show S3 cp output
   debug: msg={{ output }}
+  when: '"Vault is not initialized" in status.stdout'
 
 - name: Encrypt Recovery-Unseal Keys in S3 with KMS key
   amazon.aws.aws_s3:
@@ -183,6 +185,7 @@
     object: /creds/vault_encrypted
     src: /tmp/vault_creds_encrypted
     mode: put
+  when: '"Vault is not initialized" in status.stdout'
 
 - name: Delete the plaintext key files
   file:
