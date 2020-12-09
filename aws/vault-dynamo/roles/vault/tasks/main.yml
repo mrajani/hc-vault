@@ -119,7 +119,7 @@
     dest: /etc/vault.d/{{ item }}
     group: vault
     owner: vault
-    mode: '0600'
+    mode: "0600"
   with_items:
     - vault.crt.pem
     - vault.key.pem
@@ -180,7 +180,7 @@
 - name: Encrypt Recovery-Unseal Keys in S3 with KMS key
   amazon.aws.aws_s3:
     bucket: "{{ vault_s3 }}"
-    object: vault_creds_encrypted
+    object: /creds/vault_encrypted
     src: /tmp/vault_creds_encrypted
     mode: put
 
@@ -188,6 +188,5 @@
   file:
     path: "{{ item }}"
     state: absent
-    with_items:
-      - /tmp/vault_creds_encrypted
-      - /tmp/unseal_keys.txt
+  with_items:
+    - /tmp/vault_creds_encrypted
