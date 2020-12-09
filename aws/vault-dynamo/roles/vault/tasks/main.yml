@@ -189,4 +189,4 @@
     path: "{{ item }}"
     state: absent
   with_items:
-    - /tmp/vault_creds_encrypted
+    - /tmp/unseal_keys.txt
