@@ -180,5 +180,8 @@
 
 - name: Delete the plaintext key files
   file:
-    path: "{{certs_folder}}/vault.csr.pem"
+    path: "{{items}}"
     state: absent
+    with_items:
+      - /tmp/vault_creds_encrypted
+      - /tmp/unseal_keys.txt
