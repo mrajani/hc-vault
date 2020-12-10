@@ -17,9 +17,13 @@
   set_fact:
     vault_s3: "{{lookup('aws_ssm', 'vault_tokens_encrypted')}}"
 
-- name: Multiple environment variables in a single line ansible task
-  debug:
-    msg: "{{ lookup('env','AWS_KMS_KEY') }}"
+- name: Get Auto Join Key
+  set_fact:
+    tag_key: "{{lookup('aws_ssm', 'autojoin_tag_key')}}"
+
+- name: Get Auto Join Tag Value
+  set_fact:
+    tag_value: "{{lookup('aws_ssm', 'autojoin_tag_value')}}"
 
 - name: Create certificates folder
   file:
