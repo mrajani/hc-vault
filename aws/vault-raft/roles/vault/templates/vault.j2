@@ -30,8 +30,3 @@ ui                = true
 default_lease_ttl = "24h"
 max_lease_ttl     = "24h"
 cluster_name      = "Iono-Vault-Raft"
-
-seal "awskms" {
-  region     = "{{ aws_region }}"
-  kms_key_id = "{{ aws_kms_key }}"
-}
