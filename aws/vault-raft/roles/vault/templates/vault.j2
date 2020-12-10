@@ -1,0 +1,37 @@
+storage "raft" {
+  path = "/opt/vault/raft"
+  node_id = "{{ ansible_hostname }}"
+
+  #retry_join {
+  #  auto_join = "provider=aws tag_key={{tag_key}} tag_value={{tag_value}} addr_type=private_v4"
+  #  auto_join_scheme = "http"
+  #  auto_join_port = 8201
+  #}
+}
+
+api_addr          = "https://{{ vault_dns }}"
+cluster_addr      = "https://{{ ansible_default_ipv4.address }}:8201"
+
+listener "tcp" {
+  address         = "{{ ansible_default_ipv4.address }}:8200"
+  cluster_address = "{{ ansible_default_ipv4.address }}:8201"
+  tls_cert_file   = "/etc/vault.d/vault.crt.pem"
+  tls_key_file    = "/etc/vault.d/vault.key.pem"
+  tls_min_version = "tls12"
+  tls_disable     = false
+}
+
+seal "awskms" {
+  region     = "{{ aws_region }}"
+  kms_key_id = "{{ aws_kms_key }}"
+}
+
+ui                = true
+default_lease_ttl = "24h"
+max_lease_ttl     = "24h"
+cluster_name      = "Iono-Vault-Raft"
+
+seal "awskms" {
+  region     = "{{ aws_region }}"
+  kms_key_id = "{{ aws_kms_key }}"
+}
