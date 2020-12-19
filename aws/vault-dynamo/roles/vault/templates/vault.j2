@@ -8,8 +8,8 @@ api_addr          = "https://{{ vault_dns }}"
 cluster_addr      = "https://{{ ansible_default_ipv4.address }}:8201"
 
 listener "tcp" {
-  address         = "{{ ansible_default_ipv4.address }}:8200"
-  cluster_address = "{{ ansible_default_ipv4.address }}:8201"
+  address         = "[::]:8200"
+  cluster_address = "[::]:8201"
   tls_cert_file   = "/etc/vault.d/vault.crt.pem"
   tls_key_file    = "/etc/vault.d/vault.key.pem"
   tls_min_version = "tls12"
