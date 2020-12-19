@@ -1,4 +1,4 @@
-vault_version: 1.6.0
+vault_version: 1.6.1
 certs_folder: "./roles/vault/files/"
 days_valid: "+365d"
 key_size: 2048

@@ -21,21 +21,12 @@
   set_fact:
     vault_s3: "{{lookup('aws_ssm', 'vault_tokens_encrypted')}}"
 
-- name: Create certificates folder
-  file:
-    path: "{{certs_folder}}"
-    state: directory
-    group: vault
-    owner: vault
-
 - name: Generate an OpenSSL private key
   openssl_privatekey:
     path: "{{certs_folder}}/vault.key.pem"
     size: "{{ key_size }}"
     type: "{{ key_type }}"
     backup: yes
-    group: vault
-    owner: vault
 
 - name: Generate an OpenSSL Certificate Signing Request with Subject information
   openssl_csr:
