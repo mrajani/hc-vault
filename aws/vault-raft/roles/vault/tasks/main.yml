@@ -79,7 +79,7 @@
 - name: Copy Vault Certs
   copy:
     src: "{{ item }}"
-    dest: /etc/vault.d/{{ item }}
+    dest: /etc/vault.d/{{ item }}/
     group: vault
     owner: vault
     mode: "0600"
