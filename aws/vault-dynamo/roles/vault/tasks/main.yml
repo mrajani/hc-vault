@@ -25,8 +25,8 @@
   file:
     path: "{{certs_folder}}"
     state: directory
-    group: "{{ ansible_user }}"
-    owner: "{{ ansible_user }}"
+    group: vault
+    owner: vault
 
 - name: Generate an OpenSSL private key
   openssl_privatekey:
@@ -34,8 +34,8 @@
     size: "{{ key_size }}"
     type: "{{ key_type }}"
     backup: yes
-    group: "{{ ansible_user }}"
-    owner: "{{ ansible_user }}"
+    group: vault
+    owner: vault
 
 - name: Generate an OpenSSL Certificate Signing Request with Subject information
   openssl_csr:
@@ -92,7 +92,7 @@
     group: vault
     owner: vault
   with_items:
-    - /opt/vault/raft
+    - /opt/vault/dynamo
     - /etc/vault.d
 
 - name: Copy vault config over
