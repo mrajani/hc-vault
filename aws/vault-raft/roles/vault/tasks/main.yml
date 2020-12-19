@@ -78,15 +78,15 @@
 
 - name: Copy Vault Certs
   copy:
-    src: "{{ item }}"
-    dest: /etc/vault.d/{{ item }}/
+    src: "/home/{{user}}/{{ item }}"
+    dest: /etc/vault.d/{{ item }}
     group: vault
     owner: vault
     mode: "0600"
   with_items:
-    - "/home/{{user}}/ca.crt.pem"
-    - "/home/{{user}}/vault.crt.pem"
-    - "/home/{{user}}/vault.key.pem"
+    - ca.crt.pem
+    - vault.crt.pem
+    - vault.key.pem
 
 - name: Restart systemctl daemon
   shell: systemctl daemon-reload
