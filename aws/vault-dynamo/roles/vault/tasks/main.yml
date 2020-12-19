@@ -21,10 +21,6 @@
   set_fact:
     vault_s3: "{{lookup('aws_ssm', 'vault_tokens_encrypted')}}"
 
-- name: Multiple environment variables in a single line ansible task
-  debug:
-    msg: "{{ lookup('env','AWS_KMS_KEY') }}"
-
 - name: Create certificates folder
   file:
     path: "{{certs_folder}}"
