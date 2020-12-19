@@ -1,5 +1,2 @@
-vault_version: 1.6.0
-certs_folder: "./roles/vault/files/"
-days_valid: "+365d"
-key_size: 2048
-key_type: RSA # Others include DSA, ECC, Ed25519, Ed448, X25519, X448
+vault_version: 1.6.1
+user: "{{ 'ubuntu' if ansible_distribution == 'Ubuntu' else 'ec2-user' }}"
