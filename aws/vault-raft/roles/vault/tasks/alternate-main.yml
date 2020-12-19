@@ -102,3 +102,58 @@
     timeout: 180
     port: 8200
     host: "{{ ansible_default_ipv4.address }}"
+
+- name: Verify Vault Initialized
+  environment:
+    VAULT_ADDR: "https://{{ ansible_default_ipv4.address }}:8200"
+  command: /usr/local/bin/vault operator init -status -tls-skip-verify
+  ignore_errors: true
+  changed_when:
+    - status.rc == 2
+    - '"Vault is not initialized" in status.stdout'
+  register: status
+
+- name: Initialize Vault
+  environment:
+    VAULT_ADDR: "https://{{ ansible_default_ipv4.address }}:8200"
+  command: /usr/local/bin/vault operator init -tls-skip-verify
+  register: unseal_keys
+  when: '"Vault is not initialized" in status.stdout'
+
+- name: Show Unseal keys
+  debug:
+    var: unseal_keys
+
+- name: Save the unseal keys to file
+  copy:
+    content: "{{ unseal_keys.stdout }}"
+    dest: /tmp/unseal_keys.txt
+  when: '"Vault is not initialized" in status.stdout'
+
+- name: Encrypt Recovery-Unseal Keys in S3 with KMS key
+  args:
+    executable: /bin/bash
+    chdir: /tmp
+  shell: |
+    aws kms encrypt --region "{{ aws_region }}" --key-id "{{ aws_kms_key }}" --plaintext fileb://unseal_keys.txt --output text --query CiphertextBlob | /usr/bin/base64 --decode > /tmp/vault_creds_encrypted
+  register: output
+  when: '"Vault is not initialized" in status.stdout'
+
+- name: Show S3 cp output
+  debug: msg={{ output }}
+  when: '"Vault is not initialized" in status.stdout'
+
+- name: Encrypt Recovery-Unseal Keys in S3 with KMS key
+  amazon.aws.aws_s3:
+    bucket: "{{ vault_s3 }}"
+    object: /creds/vault_encrypted
+    src: /tmp/vault_creds_encrypted
+    mode: put
+  when: '"Vault is not initialized" in status.stdout'
+
+- name: Delete the plaintext key files
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - /tmp/unseal_keys.txt
