@@ -84,9 +84,9 @@
     owner: vault
     mode: "0600"
   with_items:
-    - "home/{{user}}/ca.crt.pem"
-    - "home/{{user}}/vault.crt.pem"
-    - "home/{{user}}/vault.key.pem"
+    - "/home/{{user}}/ca.crt.pem"
+    - "/home/{{user}}/vault.crt.pem"
+    - "/home/{{user}}/vault.key.pem"
 
 - name: Restart systemctl daemon
   shell: systemctl daemon-reload
