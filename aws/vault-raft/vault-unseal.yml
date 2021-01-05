@@ -34,7 +34,7 @@
     changed_when:
       - join_status.rc == 2
     register: join_status
-    when: "{{ 'https://' in vault_leader }}"
+    when: vault_leader.find('https') != -1
 
   - name: Print join_status
     debug: msg={{ join_status }}
