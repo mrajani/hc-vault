@@ -28,7 +28,7 @@
 
   - name: Join Vault Cluster if leader is found
     environment:
-      VAULT_ADDR: "https://{{ ansible_fqdn }}:8200"
+      VAULT_ADDR: "https://127.0.0.1:8200"
     command: /usr/local/bin/vault operator raft join {{ vault_leader }}
     ignore_errors: true
     changed_when:
@@ -41,7 +41,7 @@
 
   - name: Verify Vault Initialized
     environment:
-      VAULT_ADDR: "https://{{ ansible_default_ipv4.address }}:8200"
+      VAULT_ADDR: "https://127.0.0.1:8200"
     command: /usr/local/bin/vault operator init -status -tls-skip-verify
     ignore_errors: true
     changed_when:
@@ -51,7 +51,7 @@
 
   - name: Initialize Vault if not initialized and no cluster leader found
     environment:
-      VAULT_ADDR: "https://{{ ansible_default_ipv4.address }}:8200"
+      VAULT_ADDR: "https://127.0.0.1:8200"
     command: /usr/local/bin/vault operator init -tls-skip-verify
     register: unseal_keys
     when: ('"Vault is not initialized" in status.stdout' and vault_leader == 'none')
@@ -61,7 +61,7 @@
       region: "{{ aws_region }}"
       name: "vault_leader"
       description: "Current Vault Cluster Leader"
-      value: "https://{{ ansible_default_ipv4.address }}:8200"
+      value: "https://{{ ansible_fqdn }}:8200"
     when: vault_leader == 'none'
 
   - name: Show Unseal keys
