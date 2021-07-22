@@ -1,2 +1,2 @@
-vault_version: 1.6.1
+vault_version: 1.7.3
 user: "{{ 'ubuntu' if ansible_distribution == 'Ubuntu' else 'ec2-user' }}"
