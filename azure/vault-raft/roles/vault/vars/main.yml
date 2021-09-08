@@ -1,0 +1,2 @@
+vault_version: 1.8.2
+user: "{{ 'ubuntu' if ansible_distribution == 'Ubuntu' else 'azure' }}"
