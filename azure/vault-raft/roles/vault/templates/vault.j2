@@ -3,13 +3,16 @@ storage "raft" {
   node_id = "{{ ansible_hostname }}"
 
   retry_join {
-    auto_join = "provider=aws tag_key={{tag_key}} tag_value={{tag_value}} addr_type=private_v4"
-    #auto_join_scheme = "http"
-    #auto_join_port = 8201
+    auto_join = "provider=azure subscription_id={{ subscription_id }}  resource_group={{ resource_group }} vm_scale_set={{ vm_scale_set }}"
+    auto_join_scheme        = "https"
+    leader_tls_servername   = "127.0.0.1"
+    leader_ca_cert_file     = "/etc/vault.d/ca.crt.pem"
+    leader_client_cert_file = "/etc/vault.d/vault.crt.pem"
+    leader_client_key_file  = "/etc/vault.d/vault.key.pem"
   }
 }
 
-api_addr          = "https://{{ vault_dns }}"
+api_addr          = "https://{{ ansible_default_ipv4.address }}"
 cluster_addr      = "https://{{ ansible_default_ipv4.address }}:8201"
 
 listener "tcp" {
@@ -22,12 +25,16 @@ listener "tcp" {
   tls_disable     = false
 }
 
-seal "awskms" {
-  region     = "{{ aws_region }}"
-  kms_key_id = "{{ aws_kms_key }}"
-}
+#seal "azurekeyvault" {
+# tenant_id       = "246dd7ab-f96c-4efb-<last_part_hidden"
+# vault_name      = "vault-k8s-data"
+# key_name        = "vault-k8s-unsealer-key"
+# client_id       = "defdac63-6f29-4670-<last_part_hidden"
+# client_secret   = "3qT0C1YfnHa_9~kqQf.<last_part_hidden"
+# # subscription_id = "f982b9f7-4c2b-4c4c-<last_part_hidden>"
+#}
 
 ui                = true
 default_lease_ttl = "24h"
 max_lease_ttl     = "24h"
-cluster_name      = "Iono-Vault-Raft"
+cluster_name      = "Iono-Vault-Raft-On-Azure"

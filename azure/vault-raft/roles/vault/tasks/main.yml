@@ -1,4 +1,31 @@
 ---
+
+- name: apt Update curl
+  apt:
+    name:  curl
+    state: latest
+  when: ansible_os_family == "Debian"
+
+- name: yum Install curl
+  yum:
+    name: curl
+    state: present
+  when: (ansible_os_family == "RedHat")
+
+- name: Get Instance Metadata
+  shell: curl -H Metadata:true "http://169.254.169.254/metadata/instance/compute?api-version=2021-05-01&format=json"
+  register: metadata
+
+- name: get facts for from metadata service
+  set_fact:
+    md: "{{ metadata.stdout | from_json }}"
+
+- name: "set azure_metadata"
+  set_fact:
+    subscription_id: "{{ md.subscriptionId }}"
+    resource_group: "{{ md.resourceGroupName }}"
+    vm_scale_set: "{{ md.vmScaleSetName }}"
+
 - name: Download Vault executable
   get_url:
     url: https://releases.hashicorp.com/vault/{{ vault_version }}/vault_{{ vault_version }}_linux_amd64.zip
@@ -47,7 +74,7 @@
 
 - name: Copy Vault Certs
   copy:
-    src: "/usr/local/etc"
+    src: "/usr/local/etc/{{ item }}"
     dest: /etc/vault.d/{{ item }}
     group: vault
     owner: vault
