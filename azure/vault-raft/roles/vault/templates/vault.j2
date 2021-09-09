@@ -3,7 +3,7 @@ storage "raft" {
   node_id = "{{ ansible_hostname }}"
 
   retry_join {
-    auto_join = "provider=azure subscription_id={{ subscription_id }}  resource_group={{ resource_group }} vm_scale_set={{ vm_scale_set }}"
+    auto_join = "provider=azure tag_name=vault_consul_member tag_value=join subscription_id={{ subscription_id }}  resource_group={{ resource_group }} vm_scale_set={{ vm_scale_set }}"
     auto_join_scheme        = "https"
     leader_tls_servername   = "127.0.0.1"
     leader_ca_cert_file     = "/etc/vault.d/ca.crt.pem"
@@ -12,17 +12,17 @@ storage "raft" {
   }
 }
 
-api_addr          = "https://{{ ansible_default_ipv4.address }}"
+api_addr          = "https://{{ ansible_default_ipv4.address }}:8200"
 cluster_addr      = "https://{{ ansible_default_ipv4.address }}:8201"
 
 listener "tcp" {
-  address         = "[::]:8200"
-  cluster_address = "[::]:8201"
-  tls_cert_file   = "/etc/vault.d/vault.crt.pem"
-  tls_key_file    = "/etc/vault.d/vault.key.pem"
-  tls_client_ca_file = "/etc/vault.d/ca.crt.pem"
-  tls_min_version = "tls12"
-  tls_disable     = false
+  address             = "[::]:8200"
+  cluster_address     = "[::]:8201"
+  tls_cert_file       = "/etc/vault.d/vault.crt.pem"
+  tls_key_file        = "/etc/vault.d/vault.key.pem"
+  tls_client_ca_file  = "/etc/vault.d/ca.crt.pem"
+  tls_min_version     = "tls12"
+  tls_disable         = false
 }
 
 #seal "azurekeyvault" {
@@ -31,7 +31,7 @@ listener "tcp" {
 # key_name        = "vault-k8s-unsealer-key"
 # client_id       = "defdac63-6f29-4670-<last_part_hidden"
 # client_secret   = "3qT0C1YfnHa_9~kqQf.<last_part_hidden"
-# # subscription_id = "f982b9f7-4c2b-4c4c-<last_part_hidden>"
+# subscription_id = {{ subscription_id }}
 #}
 
 ui                = true
