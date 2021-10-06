@@ -3,7 +3,8 @@ storage "raft" {
   node_id = "{{ ansible_hostname }}"
 
   retry_join {
-    auto_join = "provider=azure tag_name=vault_consul_member tag_value=join subscription_id={{ subscription_id }}  resource_group={{ resource_group }} vm_scale_set={{ vm_scale_set }}"
+    # auto_join = "provider=azure tag_name=vault_consul_member tag_value=join subscription_id={{ subscription_id }}  resource_group={{ resource_group }} vm_scale_set={{ vm_scale_set }}"
+    auto_join = "provider=azure subscription_id={{ subscription_id }} resource_group={{ resource_group }} vm_scale_set={{ vm_scale_set }}"
     auto_join_scheme        = "https"
     leader_tls_servername   = "127.0.0.1"
     leader_ca_cert_file     = "/etc/vault.d/ca.crt.pem"
@@ -29,8 +30,8 @@ seal "azurekeyvault" {
  tenant_id        = "{{tenant_id}}"
  vault_name       = "{{vault_name}}"
  key_name         = "{{key_name}}"
-# client_id       = "defdac63-6f29-4670-<last_part_hidden"
-# client_secret   = "3qT0C1YfnHa_9~kqQf.<last_part_hidden"
+ # client_id      = "defdac63-6f29-4670-last_part_hidden"
+ # client_secret  = "3qT0C1YfnHa_9~kqQf-last_part_hidden"
  subscription_id = "{{ subscription_id }}"
 }
 
